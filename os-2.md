@@ -151,7 +151,7 @@ Note:  the code will not guarantee that the numbers are printed in order (1 to 1
 
 To ensure numbers are printed in order, you can:
 
-1. Use a Single Thread: Execute the tasks sequentially without creating separate threads.
+### 1. Use a Single Thread: Execute the tasks sequentially without creating separate threads.
 ```java
 public class Main {
     public static void main(String[] args) {
@@ -162,9 +162,9 @@ public class Main {
 }
 ```
 
-2. Use Thread Synchronization: There are several ways to ensure threads print numbers in order using thread synchronization techniques. Below are the most common approaches:
+### 2. Use Thread Synchronization: There are several ways to ensure threads print numbers in order using thread synchronization techniques. Below are the most common approaches:
 
-###a. Using synchronized and a Shared Lock
+#### a. Using synchronized and a Shared Lock
 
 ```java
 class NumberPrinter implements Runnable {
