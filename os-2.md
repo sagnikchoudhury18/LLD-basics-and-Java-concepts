@@ -208,7 +208,7 @@ How It Works:
 - The lock ensures only one thread can access the critical section at a time.
 
 
-b. Using ReentrantLock and a Condition
+#### b. Using ReentrantLock and a Condition
 
 A ReentrantLock with a Condition object provides fine-grained control over thread synchronization.
 
@@ -260,7 +260,7 @@ How It Works:
 - The Condition object (condition.await() and condition.signalAll()) is used to control thread execution order.
 
 
-c. Using a Semaphore
+#### c. Using a Semaphore
 
 A Semaphore can be used to control access to resources, allowing threads to proceed one at a time in order.
 
@@ -310,7 +310,7 @@ How It Works:
 - Only the current thread has a permit to execute.
 - After finishing, the thread releases the permit for the next thread.
 
-d. Using ExecutorService with Single Thread Executor
+#### d. Using ExecutorService with Single Thread Executor
 
 Instead of managing threads manually, you can use an ExecutorService to queue tasks in order.
 
