@@ -87,7 +87,7 @@ The Thread object internally calls the run() method of the Runnable object (newT
 
 
 
-#### Number printer
+### Number printer
 
 **Problem Statement**
 * Create a new thread that prints the numbers from 1 to 10.
@@ -144,6 +144,215 @@ public class Main {
     }
 }
 ```
+
+Note:  the code will not guarantee that the numbers are printed in order (1 to 10). 
+
+## How to Ensure Ordered Printing?
+
+To ensure numbers are printed in order, you can:
+
+1. Use a Single Thread: Execute the tasks sequentially without creating separate threads.
+```java
+public class Main {
+    public static void main(String[] args) {
+        for (int i = 1; i <= 10; i++) {
+            System.out.println(i);
+        }
+    }
+}
+```
+
+2. Use Thread Synchronization: There are several ways to ensure threads print numbers in order using thread synchronization techniques. Below are the most common approaches:
+
+a. Using synchronized and a Shared Lock
+
+```java
+class NumberPrinter implements Runnable {
+    private static final Object lock = new Object();
+    private static int currentNumber = 1;
+    private final int number;
+
+    public NumberPrinter(int number) {
+        this.number = number;
+    }
+
+    @Override
+    public void run() {
+        synchronized (lock) {
+            while (number != currentNumber) { 
+                try {
+                    lock.wait(); // Wait for the turn
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+            System.out.println(number);
+            currentNumber++; // Increment the shared variable
+            lock.notifyAll(); // Notify other waiting threads
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        for (int i = 1; i <= 10; i++) {
+            Thread thread = new Thread(new NumberPrinter(i));
+            thread.start();
+        }
+    }
+}
+```
+How It Works:
+- A shared currentNumber variable ensures only the thread with the matching number proceeds.
+- Threads wait (lock.wait()) until their number matches currentNumber.
+- The lock ensures only one thread can access the critical section at a time.
+
+
+b. Using ReentrantLock and a Condition
+
+A ReentrantLock with a Condition object provides fine-grained control over thread synchronization.
+
+```java
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+class NumberPrinter implements Runnable {
+    private static final Lock lock = new ReentrantLock();
+    private static final Condition condition = lock.newCondition();
+    private static int currentNumber = 1;
+    private final int number;
+
+    public NumberPrinter(int number) {
+        this.number = number;
+    }
+
+    @Override
+    public void run() {
+        lock.lock();
+        try {
+            while (number != currentNumber) {
+                condition.await(); // Wait for the turn
+            }
+            System.out.println(number);
+            currentNumber++;
+            condition.signalAll(); // Notify other waiting threads
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } finally {
+            lock.unlock();
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        for (int i = 1; i <= 10; i++) {
+            Thread thread = new Thread(new NumberPrinter(i));
+            thread.start();
+        }
+    }
+}
+```
+
+How It Works:
+- The ReentrantLock ensures only one thread enters the critical section.
+- The Condition object (condition.await() and condition.signalAll()) is used to control thread execution order.
+
+
+c. Using a Semaphore
+
+A Semaphore can be used to control access to resources, allowing threads to proceed one at a time in order.
+
+```java
+import java.util.concurrent.Semaphore;
+
+class NumberPrinter implements Runnable {
+    private static final Semaphore[] semaphores = new Semaphore[10];
+    private final int number;
+
+    static {
+        for (int i = 0; i < semaphores.length; i++) {
+            semaphores[i] = new Semaphore(i == 0 ? 1 : 0); // First thread starts with a permit
+        }
+    }
+
+    public NumberPrinter(int number) {
+        this.number = number;
+    }
+
+    @Override
+    public void run() {
+        try {
+            semaphores[number - 1].acquire(); // Wait for the turn
+            System.out.println(number);
+            if (number < semaphores.length) {
+                semaphores[number].release(); // Allow the next thread to proceed
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        for (int i = 1; i <= 10; i++) {
+            Thread thread = new Thread(new NumberPrinter(i));
+            thread.start();
+        }
+    }
+}
+```
+
+How It Works:
+- Each thread waits on its own Semaphore.
+- Only the current thread has a permit to execute.
+- After finishing, the thread releases the permit for the next thread.
+
+d. Using ExecutorService with Single Thread Executor
+
+Instead of managing threads manually, you can use an ExecutorService to queue tasks in order.
+
+```java
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+class NumberPrinter implements Runnable {
+    private final int number;
+
+    public NumberPrinter(int number) {
+        this.number = number;
+    }
+
+    @Override
+    public void run() {
+        System.out.println(number);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+
+        for (int i = 1; i <= 10; i++) {
+            executor.execute(new NumberPrinter(i)); // Tasks are queued and executed sequentially
+        }
+
+        executor.shutdown();
+    }
+}
+```
+
+How It Works:
+- A single-threaded executor ensures tasks are executed one at a time, in the order they are submitted.
+
+
+Recommendation:
+- Use ExecutorService if sequential execution is sufficient and no custom threading logic is needed.
+- Use synchronized or ReentrantLock for full control and if task order needs strict enforcement.
+
+
 
 ## Executor
 
