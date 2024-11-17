@@ -70,10 +70,10 @@ To run the thread, we call the start() method on the Thread object. This method 
 thread.start();
 ```
 
-The Task
+### The Task
 The task refers to the work or logic that needs to be executed by the thread. This logic is defined in the run() method of the Runnable implementation.
 
-The Thread
+### The Thread
 The thread refers to the actual thread of execution provided by the Thread class. It is responsible for running the task defined in the run() method.
 
 Thread thread = new Thread(newThread);
