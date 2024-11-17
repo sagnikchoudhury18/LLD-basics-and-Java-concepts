@@ -70,6 +70,23 @@ To run the thread, we call the start() method on the Thread object. This method 
 thread.start();
 ```
 
+The Task
+The task refers to the work or logic that needs to be executed by the thread. This logic is defined in the run() method of the Runnable implementation.
+
+The Thread
+The thread refers to the actual thread of execution provided by the Thread class. It is responsible for running the task defined in the run() method.
+
+Thread thread = new Thread(newThread);
+
+In this line:
+
+1. A Thread object is created, wrapping around the NewThread task (the Runnable object).
+2. The Thread class takes care of scheduling and executing the run() method in a separate thread of execution when thread.start() is called.
+
+The Thread object internally calls the run() method of the Runnable object (newThread) and executes it in a separate thread of execution.
+
+
+
 #### Number printer
 
 **Problem Statement**
