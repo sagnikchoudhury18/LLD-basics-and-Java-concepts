@@ -378,6 +378,26 @@ Executor executorService = Executors.newCachedThreadPool();
 executorService.execute(() -> System.out.println("Hello World"));
 ```
 
+
+## Executor vs ExecutorService
+
+The Executor and ExecutorService are key interfaces in Java's java.util.concurrent package that help manage and control threads. Here's an explanation of their purpose and differences, with examples:
+
+### Executor
+
+#### Definition:
+The Executor interface provides a simple way to decouple task submission from the mechanics of how each task will be run.
+It is a functional interface with a single method:
+```java
+
+void execute(Runnable command);
+```
+
+Use Case:
+
+- Best suited for cases where you simply want to submit tasks for asynchronous execution.
+- It doesn’t provide advanced lifecycle management or scheduling features.
+
 ## Callable and Future
 
 Runnables do not return a result. If we want to execute a task that returns a result, we can use the `Callable` interface. The `Callable` interface is a functional interface that has only one method:
