@@ -383,20 +383,73 @@ executorService.execute(() -> System.out.println("Hello World"));
 
 The Executor and ExecutorService are key interfaces in Java's java.util.concurrent package that help manage and control threads. Here's an explanation of their purpose and differences, with examples:
 
-### Executor
+## Executor
 
 #### Definition:
 The Executor interface provides a simple way to decouple task submission from the mechanics of how each task will be run.
 It is a functional interface with a single method:
-```java
 
+```java
 void execute(Runnable command);
 ```
 
 Use Case:
-
 - Best suited for cases where you simply want to submit tasks for asynchronous execution.
 - It doesn’t provide advanced lifecycle management or scheduling features.
+
+
+```java
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
+public class Main {
+    public static void main(String[] args) {
+        Executor executor = Executors.newSingleThreadExecutor();
+        Runnable task = () -> System.out.println("Task executed by " + Thread.currentThread().getName());
+        executor.execute(task);
+    }
+}
+```
+
+##ExecutorService
+
+#### Definition:
+
+- ExecutorService extends the Executor interface and adds methods for managing the lifecycle and controlling tasks.
+- It provides more advanced functionalities such as task submission, result retrieval, and thread pool management.
+- Important methods include:
+  
+```java
+void shutdown();
+<T> Future<T> submit(Callable<T> task);
+List<Runnable> shutdownNow();
+boolean isTerminated();
+```
+
+Use Case:
+- Use ExecutorService when you need lifecycle management, thread pooling, or the ability to retrieve task results.
+
+
+```java
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class Main {
+    public static void main(String[] args) {
+        ExecutorService executorService = Executors.newFixedThreadPool(3);
+
+        for (int i = 1; i <= 5; i++) {
+            final int taskId = i;
+            executorService.submit(() -> {
+                System.out.println("Executing Task " + taskId + " on " + Thread.currentThread().getName());
+            });
+        }
+
+        executorService.shutdown(); // Gracefully shuts down the executor
+    }
+}
+```
+
 
 ## Callable and Future
 
