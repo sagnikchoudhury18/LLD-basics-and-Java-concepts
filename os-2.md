@@ -164,7 +164,7 @@ public class Main {
 
 2. Use Thread Synchronization: There are several ways to ensure threads print numbers in order using thread synchronization techniques. Below are the most common approaches:
 
-a. Using synchronized and a Shared Lock
+###a. Using synchronized and a Shared Lock
 
 ```java
 class NumberPrinter implements Runnable {
