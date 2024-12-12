@@ -87,8 +87,6 @@ The Thread object internally calls the run() method of the Runnable object (newT
 
 
 
-### Number printer
-
 **Problem Statement 1**
 * Create a new thread that prints the numbers from 1 to 10.
 
@@ -113,6 +111,12 @@ public class Main {
     }
 }
 ```
+
+<br>
+
+<br>
+
+<br>
 
 **Problem Statement 2**
 * Print the numbers from 1 to 10 where each number is printed by a different thread.
@@ -354,7 +358,11 @@ Recommendation:
 
 
 
+<br>
 
+<br>
+
+<br>
 
 **Problem Statement 3**
 * Square the elements of an array and retrieve them in the same order using threads
