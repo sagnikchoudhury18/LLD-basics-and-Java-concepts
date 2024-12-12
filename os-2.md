@@ -89,7 +89,7 @@ The Thread object internally calls the run() method of the Runnable object (newT
 
 ### Number printer
 
-**Problem Statement**
+**Problem Statement 1**
 * Create a new thread that prints the numbers from 1 to 10.
 
 **Solution**
@@ -351,6 +351,181 @@ How It Works:
 Recommendation:
 - Use ExecutorService if sequential execution is sufficient and no custom threading logic is needed.
 - Use synchronized or ReentrantLock for full control and if task order needs strict enforcement.
+
+
+
+
+
+**Problem Statement 3**
+* Square the elements of an array and retrieve them in the same order using threads
+
+
+#### a. Thread Pool with Task Distribution:
+
+```java
+import java.util.concurrent.*;
+
+public class ThreadPoolSquaring {
+    public static void main(String[] args) {
+        int[] arr = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+        ExecutorService executor = Executors.newFixedThreadPool(4);
+        int chunkSize = arr.length / executor.getMaximumPoolSize();
+
+        for (int i = 0; i < executor.getMaximumPoolSize(); i++) {
+            int start = i * chunkSize;
+            int end = (i + 1) * chunkSize;
+            if (i == executor.getMaximumPoolSize() - 1) {
+                end = arr.length;
+            }
+            executor.submit(() -> {
+                for (int j = start; j < end; j++) {
+                    arr[j] *= arr[j];
+                }
+            });
+        }
+
+        executor.shutdown();
+        try {
+            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // Print the squared array
+        for (int num : arr) {
+            System.out.print(num + " ");
+        }
+    }
+}
+```
+
+#### b. Thread-Per-Element Approach:
+
+```java
+public class ThreadPerElementSquaring {
+    public static void main(String[] args) {
+        int[] arr = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+        Thread[] threads = new Thread[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            final int index = i;
+            threads[i] = new Thread(() -> {
+                arr[index] *= arr[index];
+            });
+            threads[i].start();
+        }
+
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Print the squared array
+        for (int num : arr) {
+            System.out.print(num + " ");
+        }
+    }
+}
+```
+
+
+#### c. Producer-Consumer Pattern:
+
+```java
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+public class ProducerConsumerSquaring {
+    public static void main(String[] args) {
+        int[] arr = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+        BlockingQueue<Integer> inputQueue = new LinkedBlockingQueue<>();
+        BlockingQueue<Integer> outputQueue = new LinkedBlockingQueue<>();
+
+        // Producer thread
+        new Thread(() -> {
+            for (int num : arr) {
+                try {
+                    inputQueue.put(num);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+        // Consumer threads
+        for (int i = 0; i < 4; i++) {
+            new Thread(() -> {
+                while (true) {
+                    try {
+                        int num = inputQueue.take();
+                        outputQueue.put(num * num);
+                    } catch (InterruptedException e) {
+                        break;
+                    }
+                }
+            }).start();
+        }
+
+        // Consumer thread to collect results
+        new Thread(() -> {
+            int i = 0;
+            while (true) {
+                try {
+                    arr[i++] = outputQueue.take();
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
+        }).start();
+
+        // Wait for all threads to finish
+        // ... (Implement a mechanism to wait for all threads to finish)
+    }
+}
+```
+
+
+
+#### d. Using Future and Callable which works asynchronously but then here we are retrieving the results in order as the get() in futures is a blocking method:
+
+```java
+import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class FutureCallableOrdered {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        int[] arr = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+        ExecutorService executor = Executors.newFixedThreadPool(4);
+        List<Future<Integer>> futures = new ArrayList<>();
+
+        // Submit tasks and store futures in order
+        for (int i = 0; i < arr.length; i++) {
+            int finalI = i;
+            futures.add(executor.submit(() -> arr[finalI] * arr[finalI]));
+        }
+
+        executor.shutdown();
+
+        // Retrieve results in order and assign to the array
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = futures.get(i).get();
+        }
+
+        // Print the squared array
+        for (int num : arr) {
+            System.out.print(num + " ");
+        }
+    }
+}
+```
+
+
 
 
 
