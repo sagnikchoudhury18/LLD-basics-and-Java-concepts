@@ -659,6 +659,14 @@ Future<Integer> future = executorService.submit(() -> 2 + 3);
 Integer result = future.get();
 ```
 
+OR
+
+```java
+ExecutorService executorService = Executors.newCachedThreadPool();
+Future<Integer> future = executorService.submit(sumTask);
+Integer result = future.get();
+```
+
 Futures can be used to cancel tasks. The `Future` interface has a method called `cancel` that can be used to cancel a task. The `cancel` method takes a boolean parameter. If the boolean parameter is `true`, the task is cancelled even if the task is already running. If the boolean parameter is `false`, the task is cancelled only if the task is not running. 
 
 ```java
