@@ -695,6 +695,59 @@ try {
 ```
 
 
+##  Callable + Future  vs Completable Future
+ 
+####  Callable + Future
+
+Use this when:
+
+- You need a simple, one-time background task that returns a result.
+- You're okay with blocking the thread (e.g., using future.get()).
+- You don't need to chain multiple tasks or handle results asynchronously.
+
+Example use case:
+Load data from a file or a database in the background.
+
+Compute something and wait for the result before proceeding.
+
+```
+Callable<Integer> task = () -> heavyComputation();
+Future<Integer> future = executor.submit(task);
+Integer result = future.get(); // BLOCKS
+```
+
+
+#### CompletableFuture
+
+Use this when:
+
+- You want non-blocking, asynchronous programming.
+- You need to chain multiple tasks (e.g., task1 → task2 → task3).
+- You want better exception handling, timeouts, or parallel execution.
+
+Example use case:
+Make multiple API calls in parallel and process all responses together.
+
+Create complex pipelines: fetch → transform → store → log.
+
+```
+CompletableFuture.supplyAsync(() -> fetchData())
+    .thenApply(data -> transformData(data))
+    .thenAccept(result -> storeResult(result))
+    .exceptionally(ex -> { log(ex); return null; });
+```
+
+This executes without blocking the main thread and allows chaining and error handling.
+
+
+Goal / Scenario	Use
+Simple background task with result (sync/blocking)	Callable + Future
+Complex async flow with multiple steps	CompletableFuture
+Need chaining, combining results from tasks	CompletableFuture
+Just fire a task and wait for result later	Callable + Future
+Don't want to block on result	CompletableFuture
+
+
 ## Reading List
 
 * [Web Browser architecture](https://levelup.gitconnected.com/how-web-browsers-use-processes-and-threads-9f8f8fa23371)
