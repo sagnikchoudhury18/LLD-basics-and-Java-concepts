@@ -26,5 +26,17 @@ public class Main {
 
         System.out.println("Value of the i in counter: " + counter.i);
 
+/*
+t1.join();
+t2.join();
+are used to block the main thread (the thread executing the main() method) until both t1 and t2 have finished executing.
+
+Why is this important?
+Without join(), the main thread could reach this line:
+
+System.out.println("Value of the i in counter: " + counter.i);
+before t1 and t2 finish their execution. This would mean you're printing the value of counter.i before the threads finish modifying it, giving you an incomplete or incorrect result.
+    */
+
     }
 }
