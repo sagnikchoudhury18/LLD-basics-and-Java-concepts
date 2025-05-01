@@ -741,11 +741,11 @@ This executes without blocking the main thread and allows chaining and error han
 
 
 Goal / Scenario	Use
-Simple background task with result (sync/blocking)	Callable + Future
-Complex async flow with multiple steps	CompletableFuture
-Need chaining, combining results from tasks	CompletableFuture
-Just fire a task and wait for result later	Callable + Future
-Don't want to block on result	CompletableFuture
+- Simple background task with result (sync/blocking)	Callable + Future
+- Complex async flow with multiple steps	CompletableFuture
+- Need chaining, combining results from tasks	CompletableFuture
+- Just fire a task and wait for result later	Callable + Future
+- Don't want to block on result	CompletableFuture
 
 
 ## Reading List
