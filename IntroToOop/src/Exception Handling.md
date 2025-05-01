@@ -1,3 +1,4 @@
+```
 java.lang.Object  
 └── java.lang.Throwable  
     ├── java.lang.Error                   ← ❌ Not meant to be caught (Unrecoverable)
@@ -30,7 +31,7 @@ java.lang.Object
                 ├── NullPointerException
                 ├── IndexOutOfBoundsException
                 └── UnsupportedOperationException
-
+```
 
 
 
