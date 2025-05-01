@@ -34,13 +34,13 @@ java.lang.Object
 ```
 
 
-
+```
 Type	          Checked?	    Typical Use
 Error	            No	      JVM/system failures (should not handle)
 Exception	        Yes	        Recoverable conditions (must handle or declare)
 RuntimeException	No	        Programmer errors or bad logic (e.g., NPE)
 
-
+```
 
  Tricky Interview Questions
 
