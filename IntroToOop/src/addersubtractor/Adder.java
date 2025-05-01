@@ -2,6 +2,11 @@ package addersubtractor;
 
 import java.util.concurrent.locks.Lock;
 
+/*
+
+ By implementing the Runnable interface, you're defining the task (i.e., the code that will run in a separate thread) inside the run() method.
+
+*/
 public class Adder implements Runnable{
     private Counter counter;
     private Lock lock;
