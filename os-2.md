@@ -740,6 +740,69 @@ CompletableFuture.supplyAsync(() -> fetchData())
 This executes without blocking the main thread and allows chaining and error handling.
 
 
+
+Here’s an updated version of your CompletableFuture example that includes more intermediate tasks chained via .thenApply() and .thenCompose() to demonstrate transformation, validation, and enrichment steps in a web scraping pipeline:
+
+```
+import java.util.concurrent.CompletableFuture;
+
+public class CompletableFutureWebScraperExample {
+    public static void main(String[] args) {
+        System.out.println("Main thread is starting the asynchronous web scraping task...");
+
+        // Start the asynchronous task
+        CompletableFuture<String> fetchData = CompletableFuture.supplyAsync(() -> {
+            System.out.println("Fetching data from the website...");
+            try {
+                Thread.sleep(2000); // Simulate network delay
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return "Website Data: {title: 'Welcome to Java!', content: 'Learn Java with examples.'}";
+        });
+
+        // Process fetched data: Step 1 - Convert to uppercase
+        CompletableFuture<String> processData = fetchData.thenApply(data -> {
+            System.out.println("Processing fetched data (toUpperCase)...");
+            return data.toUpperCase();
+        })
+
+        // Step 2 - Append timestamp
+        .thenApply(data -> {
+            System.out.println("Appending timestamp...");
+            return data + " | TIMESTAMP: " + System.currentTimeMillis();
+        })
+
+        // Step 3 - Simulate data validation
+        .thenApply(data -> {
+            System.out.println("Validating data...");
+            if (!data.contains("JAVA")) {
+                throw new RuntimeException("Validation failed: keyword 'JAVA' not found.");
+            }
+            return data;
+        })
+
+        // Step 4 - Enrich data
+        .thenApply(data -> {
+            System.out.println("Enriching data...");
+            return data + " | STATUS: VALID";
+        });
+
+        // Final consumer to print the processed result
+        processData.thenAccept(result -> {
+            System.out.println("Processed Data: " + result);
+        });
+
+        System.out.println("Main thread continues to do other work...");
+
+        // Wait for all tasks to complete
+        processData.join();
+        System.out.println("Program finished.");
+    }
+}
+```
+
+
 Goal / Scenario	Use
 - Simple background task with result (sync/blocking)	Callable + Future
 - Complex async flow with multiple steps	CompletableFuture
