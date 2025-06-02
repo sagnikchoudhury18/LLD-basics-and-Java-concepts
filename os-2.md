@@ -112,11 +112,14 @@ t.start();
 Calling setDaemon(true) after start() throws IllegalThreadStateException.
 
 🆚 User Thread vs Daemon Thread
-Feature	                                          User Thread	                                      Daemon Thread
-Importance	                                  Main application tasks	                            Background tasks
-JVM waits?	                                          Yes	                                                No
-Shutdown	                                JVM waits until completion	                      JVM shuts down immediately if only daemons remain
-Example                                      	Main thread, app logic thread	                      GC,monitoring/logging thread
+
+| **Feature**     | **User Thread**                       | **Daemon Thread**                                    |
+|-----------------|----------------------------------------|------------------------------------------------------|
+| **Importance**  | Main application tasks                 | Background tasks                                     |
+| **JVM waits?**  | Yes                                    | No                                                   |
+| **Shutdown**    | JVM waits until completion             | JVM shuts down immediately if only daemons remain    |
+| **Example**     | Main thread, app logic thread          | GC, monitoring/logging thread                        |
+
 
 
 
