@@ -42,6 +42,83 @@ Each thread has its own program counter, stack, and set of registers. But the th
 * Concurrent - At the same time, but not necessarily at the same instant. It is possible for multiple threads to be at different stages of execution at the same time but not being processed together. A single core CPU can only execute one thread at a time. But it can switch between threads very quickly. This is called context switching. This is how concurrency is achieved. A single core CPU can have concurrency but not parallelism.
 * Parallel - At the same time and at the same instant. It is possible for multiple threads to be at different stages of execution at the same time and being processed together. A single core CPU cannot achieve parallelism. It can only achieve concurrency. A multi-core CPU can achieve both concurrency and parallelism.
 
+### Thread Lifecycle
+
+🔄 Thread Lifecycle in Java
+A thread in Java goes through several stages during its lifecycle. These stages are managed by the JVM and the Thread API:
+
+✅ 1. New (Created)
+A thread is in this state when it's created using:
+```
+Thread t = new Thread();
+```
+
+It is not yet started.
+
+▶️ 2. Runnable
+After calling .start() on the thread:
+
+t.start();
+The thread is ready to run, but not necessarily running immediately.
+
+The thread scheduler decides when to move it to the running state.
+
+🏃 3. Running
+The thread is executing its run() method.
+
+This is an active state.
+
+😴 4. Blocked/Waiting/Sleeping
+Thread temporarily not eligible for running due to:
+
+Waiting for a monitor lock (synchronized)
+
+Calling wait()
+
+Calling sleep(time)
+
+Calling join() on another thread
+
+🔚 5. Terminated (Dead)
+Thread completes execution of run(), or is stopped due to an exception.
+
+Cannot be restarted.
+
+🌙 Daemon Threads in Java
+A daemon thread is a background thread that provides services to user (non-daemon) threads.
+
+✅ Characteristics:
+It runs in the background, e.g., Garbage Collector (GC).
+
+JVM does not wait for daemon threads to finish before exiting.
+
+If only daemon threads are left, JVM exits.
+
+Should not be used for tasks requiring persistence or reliability.
+
+✅ How to Create a Daemon Thread:
+
+```
+Thread t = new Thread(() -> {
+    while (true) {
+        System.out.println("Daemon running...");
+    }
+});
+t.setDaemon(true); // Must be set before t.start()
+t.start();
+```
+
+❗ Note:
+Calling setDaemon(true) after start() throws IllegalThreadStateException.
+
+🆚 User Thread vs Daemon Thread
+Feature	                                          User Thread	                                      Daemon Thread
+Importance	                                  Main application tasks	                            Background tasks
+JVM waits?	                                          Yes	                                                No
+Shutdown	                                JVM waits until completion	                      JVM shuts down immediately if only daemons remain
+Example                                      	Main thread, app logic thread	                      GC,monitoring/logging thread
+
+
 
 ### Using threads in Java
 
