@@ -927,6 +927,27 @@ public void stop() {
 }
 ```
 
+
+Why use Volatile Example
+```
+volatile boolean flag = false;
+int a = 0;
+
+void writer() {
+    a = 42;        // (1)
+    flag = true;   // (2) volatile write
+}
+
+void reader() {
+    if (flag) {    // volatile read
+        System.out.println(a);  // (3)
+    }
+}
+```
+
+Without volatile, (3) could print 0 because the CPU/compiler could reorder (1) and (2).
+With volatile, the JMM guarantees that if flag is true, then a = 42 is visible and cannot be reordered after the volatile write.
+
 🔸 synchronized
 Guarantees:
 Mutual exclusion (only one thread can execute the block at a time).
@@ -970,15 +991,16 @@ counter.incrementAndGet(); // thread-safe and atomic
 
 Quick Decision
 
-Are you modifying shared data?
-   |
-   +-- Only need visibility? --> Use volatile
-   |
-   +-- Need atomic read/write?
-         |
-         +-- Only 1 variable? --> Use AtomicXXX
-         |
-         +-- Multiple vars or complex logic? --> Use synchronized
+Are you modifying shared data?  
+&nbsp;&nbsp;&nbsp;|  
+&nbsp;&nbsp;&nbsp;+-- Only need visibility? --> Use volatile  
+&nbsp;&nbsp;&nbsp;|  
+&nbsp;&nbsp;&nbsp;+-- Need atomic read/write?  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+-- Only 1 variable? --> Use AtomicXXX  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+-- Multiple vars or complex logic? --> Use synchronized
+
          
 
 ## Reading List
