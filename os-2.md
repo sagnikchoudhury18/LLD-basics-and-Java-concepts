@@ -891,6 +891,96 @@ Goal / Scenario	Use
 - Don't want to block on result	CompletableFuture
 
 
+
+## Understanding volatile, synchronized, and Atomic Variables
+
+📌 When to Use What?
+
+| Situation                                            | Best Tool                                  | Reason                                  |
+|------------------------------------------------------|--------------------------------------------|-----------------------------------------|
+| Simple status flag across threads                    | volatile                                   | Provides visibility and lightweight     |
+| Read-modify-write (e.g., count++)                    | synchronized / AtomicInteger               | volatile not enough — needs atomicity   |
+| Complex block requiring mutual exclusion             | synchronized                               | Manages multiple statements atomically  |
+| High-performance counter under contention            | AtomicInteger                              | Lock-free and thread-safe performance   |
+| Wait/notify coordination                             | synchronized                               | Required by wait(), notify()            |
+
+
+
+🔸 volatile
+Guarantees:
+Visibility: Changes made by one thread are immediately visible to others.
+
+Prevents instruction reordering.
+
+Lightweight — no locking overhead.
+
+Limitations:
+No atomicity for compound operations like x = x + 1.
+
+Example:
+
+```
+volatile boolean running = true;
+
+public void stop() {
+    running = false;
+}
+```
+
+🔸 synchronized
+Guarantees:
+Mutual exclusion (only one thread can execute the block at a time).
+
+Visibility: Changes made within the block are visible to other threads once the lock is released.
+
+Provides a happens-before relationship.
+
+Limitations:
+More expensive due to lock acquisition.
+
+Risk of deadlocks if not managed carefully.
+
+Example:
+```
+synchronized (lockObject) {
+    // safely modify shared data
+    counter++;
+}
+```
+
+🔸 Atomic Variables (e.g., AtomicInteger, AtomicBoolean)
+Guarantees:
+Atomic operations using CAS (Compare-And-Swap) at the CPU level.
+
+Visibility is ensured.
+
+No locking needed = high performance.
+
+Limitations:
+Only works for single-variable operations.
+
+Can't combine multiple variables atomically.
+
+Example:
+```
+AtomicInteger counter = new AtomicInteger(0);
+counter.incrementAndGet(); // thread-safe and atomic
+```
+
+
+Quick Decision
+
+Are you modifying shared data?
+   |
+   +-- Only need visibility? --> Use volatile
+   |
+   +-- Need atomic read/write?
+         |
+         +-- Only 1 variable? --> Use AtomicXXX
+         |
+         +-- Multiple vars or complex logic? --> Use synchronized
+         
+
 ## Reading List
 
 * [Web Browser architecture](https://levelup.gitconnected.com/how-web-browsers-use-processes-and-threads-9f8f8fa23371)
